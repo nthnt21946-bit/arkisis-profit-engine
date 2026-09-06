@@ -3,43 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Arkisis Profit Engine Lite v3</title>
+<title>Arkisis Profit Engine Lite v4</title>
+<meta name="description" content="売上・原価・人件費などを入力し、利益改善の打ち手を比較できる無料シミュレーター。">
 <style>
-body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f4f6;color:#111827;margin:0;padding:24px}
-.wrap{max-width:980px;margin:auto}.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-h1{margin:0 0 6px;font-size:28px}.muted{color:#6b7280;font-size:14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-label{display:block;font-size:13px;color:#374151;margin-bottom:6px}input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:15px}
-button{margin-top:14px;padding:12px 16px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.kpi{padding:16px;border-radius:12px;background:#f9fafb;border:1px solid #e5e7eb}.kpi b{font-size:22px;display:block;margin-top:4px}
-table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}th{background:#f9fafb}.good{font-weight:700}.best-row{font-weight:700;background:#ecfdf5}.note{font-size:12px;color:#6b7280;line-height:1.6}
+:root{--bg:#f5f7fb;--card:#fff;--text:#111827;--muted:#64748b;--line:#e2e8f0;--accent:#0f766e;--accent2:#115e59;--soft:#ecfdf5;--soft2:#f0fdfa}
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}.wrap{max-width:1040px;margin:auto;padding:22px 16px 48px}.hero{padding:30px 0 18px}.eyebrow{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em}.hero h1{font-size:34px;line-height:1.25;margin:8px 0 12px}.hero p{font-size:16px;line-height:1.8;color:var(--muted);max-width:760px;margin:0}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 4px 18px rgba(15,23,42,.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}label{display:block;font-size:13px;color:#334155;margin-bottom:6px}input{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;background:#fff}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px 17px;border:0;border-radius:11px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;text-decoration:none}.btn:hover{background:var(--accent2)}.btn.secondary{background:#e2e8f0;color:#0f172a}.small{font-size:12px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.kpi{padding:16px;border-radius:14px;background:#f8fafc;border:1px solid var(--line)}.kpi .label{font-size:13px;color:#64748b}.kpi b{font-size:23px;display:block;margin-top:5px}.highlight{background:var(--soft);border-color:#a7f3d0}.highlight b{color:#065f46}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare .side{padding:18px;border-radius:14px;border:1px solid var(--line);background:#fff}.compare .side.after{background:var(--soft2);border-color:#99f6e4}.compare .value{font-size:30px;font-weight:800;margin-top:4px}.delta{font-weight:800;color:#047857}.pill{display:inline-block;font-size:12px;font-weight:700;padding:5px 8px;border-radius:999px;background:#ecfeff;color:#155e75}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{background:#f8fafc}.best-row{font-weight:800;background:var(--soft)}.cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}.cta h2{margin:0 0 6px;font-size:22px}.cta p{margin:0;color:var(--muted);line-height:1.7}.note{font-size:12px;color:var(--muted);line-height:1.7}.section-title{margin:0 0 8px;font-size:21px}.error{color:#b91c1c;font-weight:700;display:none;margin-top:10px}.footer{font-size:12px;color:#94a3b8;text-align:center;padding:18px 0}
+@media(max-width:680px){.hero h1{font-size:28px}.compare{grid-template-columns:1fr}.cta{align-items:flex-start}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="card"><h1>Arkisis Profit Engine Lite v3</h1><div class="muted">「何を変えると利益が一番増えるか」を簡易比較する無料デモ</div></div>
-<div class="card">
-<div class="grid">
-<div><label for="sales">月商（円）</label><input id="sales" type="number" value="1000000" min="0"></div>
-<div><label for="units">客数・件数（月）</label><input id="units" type="number" value="200" min="0"></div>
-<div><label for="costRate">変動原価率（%）</label><input id="costRate" type="number" value="20" min="0" max="100" step="0.1"></div>
-<div><label for="labor">固定人件費（円/月）</label><input id="labor" type="number" value="250000" min="0"></div>
-<div><label for="fixed">その他固定費（円/月）</label><input id="fixed" type="number" value="200000" min="0"></div>
-<div><label for="ads">広告費（円/月）</label><input id="ads" type="number" value="50000" min="0"></div>
-</div><button id="calcBtn" type="button">利益を計算する</button>
-</div>
-<div class="card"><div class="kpis">
-<div class="kpi">現在の営業利益<b id="profit">-</b></div>
-<div class="kpi">営業利益率<b id="margin">-</b></div>
-<div class="kpi">100万円目標まで<b id="gap">-</b></div>
-<div class="kpi">最良シナリオ<b id="best">-</b></div>
-</div></div>
-<div class="card"><h2>施策比較</h2><table><thead><tr><th>施策</th><th>試算利益</th><th>現状との差</th><th>100万円との差</th></tr></thead><tbody id="rows"></tbody></table></div>
-<div class="card"><div class="note">注意：このツールは入力した前提に基づく試算です。販売数・売上・利益を保証するものではありません。税務・会計・法務判断の代替ではありません。</div></div>
+  <header class="hero">
+    <div class="eyebrow">ARKISIS / PROFIT ENGINE LITE v4</div>
+    <h1>利益を増やすなら、<br>何を変えるべきか。</h1>
+    <p>売上・客数・原価・人件費などを入力すると、複数の改善案を同時に比較できます。会計ソフトの代わりではなく、意思決定の前段で使う簡易シミュレーターです。</p>
+  </header>
+
+  <section class="card">
+    <h2 class="section-title">まず現在の数字を入れてください</h2>
+    <div class="grid">
+      <div><label for="sales">月商（円）</label><input id="sales" type="number" value="1000000" min="0"></div>
+      <div><label for="units">客数・件数（月）</label><input id="units" type="number" value="200" min="0"></div>
+      <div><label for="costRate">変動原価率（%）</label><input id="costRate" type="number" value="20" min="0" max="100" step="0.1"></div>
+      <div><label for="labor">固定人件費（円/月）</label><input id="labor" type="number" value="250000" min="0"></div>
+      <div><label for="fixed">その他固定費（円/月）</label><input id="fixed" type="number" value="200000" min="0"></div>
+      <div><label for="ads">広告費（円/月）</label><input id="ads" type="number" value="50000" min="0"></div>
+    </div>
+    <button id="calcBtn" class="btn" type="button">利益を診断する</button>
+    <div id="error" class="error"></div>
+  </section>
+
+  <section class="card">
+    <div class="kpis">
+      <div class="kpi"><div class="label">現在の営業利益</div><b id="profit">-</b></div>
+      <div class="kpi"><div class="label">営業利益率</div><b id="margin">-</b></div>
+      <div class="kpi"><div class="label">100万円目標まで</div><b id="gap">-</b></div>
+      <div class="kpi highlight"><div class="label">最良シナリオ</div><b id="best">-</b></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">現状 → 改善後</h2>
+    <div class="compare">
+      <div class="side"><div class="pill">CURRENT</div><div class="small">現在の営業利益</div><div id="beforeValue" class="value">-</div></div>
+      <div class="side after"><div class="pill">BEST SCENARIO</div><div class="small" id="afterName">最良シナリオ</div><div id="afterValue" class="value">-</div><div id="afterDelta" class="delta">-</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">どの施策が一番効くか</h2>
+    <table><thead><tr><th>施策</th><th>試算利益</th><th>現状との差</th><th>100万円との差</th></tr></thead><tbody id="rows"></tbody></table>
+  </section>
+
+  <section class="card cta">
+    <div><h2>もっと細かく比較したい方へ</h2><p>複数条件を自由に試せる詳細版Excelを用意しています。<br>実際の数値を入れて、条件を変えながら検討する方向けです。</p></div>
+    <a id="cta" class="btn" href="https://booth.pm/" target="_blank" rel="noopener">詳細版Excelを見る</a>
+  </section>
+
+  <section class="card"><div class="note">注意：本ツールは入力した前提に基づく簡易試算です。実際の販売数・売上・利益を保証するものではありません。税務・会計・法務判断の代替ではありません。最良シナリオは登録された固定シナリオの中で算出しています。</div></section>
+  <div class="footer">Arkisis Profit Engine Lite v4</div>
 </div>
 <script>
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 const yen = n => new Intl.NumberFormat('ja-JP',{style:'currency',currency:'JPY',maximumFractionDigits:0}).format(Math.round(n));
-function base(){return {sales:Number($('sales').value)||0, units:Number($('units').value)||0, rate:(Number($('costRate').value)||0)/100, labor:Number($('labor').value)||0, fixed:Number($('fixed').value)||0, ads:Number($('ads').value)||0};}
-function scenario(x,s){const revenue=x.sales*(1+s.price)*(1+s.units);const rate=Math.max(0, x.rate+s.rate);const cost=revenue*rate;const p=revenue-cost-x.labor*(1+s.labor)-x.fixed-(x.ads+s.ads);return {revenue,cost,p};}
+const TRACK_VERSION='v4';
+function track(eventName, params={}){
+  const payload={event:eventName,ts:new Date().toISOString(),path:location.pathname,referrer:document.referrer||'',...params};
+  try{
+    const key='arkisis_events';
+    const arr=JSON.parse(localStorage.getItem(key)||'[]');
+    arr.push(payload);
+    localStorage.setItem(key, JSON.stringify(arr.slice(-100)));
+  }catch(e){}
+  window.dataLayer=window.dataLayer||[];
+  window.dataLayer.push(payload);
+}
+track('page_view',{version:TRACK_VERSION});
+function base(){return {sales:Number($('sales').value)||0,units:Number($('units').value)||0,rate:(Number($('costRate').value)||0)/100,labor:Number($('labor').value)||0,fixed:Number($('fixed').value)||0,ads:Number($('ads').value)||0};}
+function scenario(x,s){const revenue=x.sales*(1+s.price)*(1+s.units);const rate=Math.max(0,x.rate+s.rate);const cost=revenue*rate;const p=revenue-cost-x.labor*(1+s.labor)-x.fixed-(x.ads+s.ads);return {revenue,cost,p};}
 const scenarioDefs=[
 ['現状',0,0,0,0,0],['価格 +3%',.03,0,0,0,0],['価格 +5%',.05,0,0,0,0],['価格 +10%',.10,0,0,0,0],
 ['客数 +5%',0,.05,0,0,0],['客数 +10%',0,.10,0,0,0],['客数 +20%',0,.20,0,0,0],
@@ -49,18 +93,28 @@ const scenarioDefs=[
 ['価格 +5% × 客数 +20% × 人件費 -10%',.05,.20,0,-.10,0],['価格 +10% × 客数 +10% × 原価 -5pt',.10,.10,-.05,0,0],
 ['価格 +5% × 客数 +10% × 広告 +20,000円',.05,.10,0,0,20000]
 ];
+let firstCalc=true;
 function calc(){
- const x=base();
- const current=scenario(x,{price:0,units:0,rate:0,labor:0,ads:0});
- const results=scenarioDefs.map(a=>{const r=scenario(x,{price:a[1],units:a[2],rate:a[3],labor:a[4],ads:a[5]});return {name:a[0],p:r.p,d:r.p-current.p,gap:1000000-r.p};});
- const bestResult=results.reduce((best,candidate)=>candidate.p>best.p?candidate:best,results[0]);
- $('profit').textContent=yen(current.p);
- $('margin').textContent=(x.sales>0?(current.p/x.sales*100):0).toFixed(1)+'%';
- $('gap').textContent=yen(Math.max(0,1000000-current.p));
- $('best').textContent=bestResult.name+' / '+yen(bestResult.p);
- $('rows').innerHTML=results.map(r=>`<tr class="${r.name===bestResult.name?'best-row':''}"><td>${r.name}${r.name===bestResult.name?' ★':''}</td><td>${yen(r.p)}</td><td class="good">${r.d>=0?'+':''}${yen(r.d)}</td><td>${yen(r.gap)}</td></tr>`).join('');
+  const x=base();
+  if(x.sales<=0){$('error').textContent='月商は1円以上を入力してください。';$('error').style.display='block';return;}
+  $('error').style.display='none';
+  const current=scenario(x,{price:0,units:0,rate:0,labor:0,ads:0});
+  const results=scenarioDefs.map(a=>{const r=scenario(x,{price:a[1],units:a[2],rate:a[3],labor:a[4],ads:a[5]});return {name:a[0],p:r.p,d:r.p-current.p,gap:1000000-r.p};});
+  const bestResult=results.reduce((best,candidate)=>candidate.p>best.p?candidate:best,results[0]);
+  $('profit').textContent=yen(current.p);
+  $('margin').textContent=(current.p/x.sales*100).toFixed(1)+'%';
+  $('gap').textContent=yen(Math.max(0,1000000-current.p));
+  $('best').textContent=bestResult.name+' / '+yen(bestResult.p);
+  $('beforeValue').textContent=yen(current.p);
+  $('afterName').textContent=bestResult.name;
+  $('afterValue').textContent=yen(bestResult.p);
+  $('afterDelta').textContent=(bestResult.d>=0?'+':'')+yen(bestResult.d)+' vs. current';
+  $('rows').innerHTML=results.map(r=>`<tr class="${r.name===bestResult.name?'best-row':''}"><td>${r.name}${r.name===bestResult.name?' ★':''}</td><td>${yen(r.p)}</td><td>${r.d>=0?'+':''}${yen(r.d)}</td><td>${r.gap>0?yen(r.gap):'目標達成'}</td></tr>`).join('');
+  track(firstCalc?'calculator_first_run':'calculator_run',{current_profit:Math.round(current.p),best_profit:Math.round(bestResult.p),best_scenario:bestResult.name});
+  firstCalc=false;
 }
 $('calcBtn').addEventListener('click',calc);
+$('cta').addEventListener('click',()=>track('cta_click',{cta:'detail_excel'}));
 calc();
 </script>
 </body></html>
